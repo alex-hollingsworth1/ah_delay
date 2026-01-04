@@ -1,0 +1,17 @@
+# JUCE generated/build folders
+Builds/
+JuceLibraryCode/
+
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+*.xcworkspace
+
+# Audio plugin binaries
+*.app
+*.component
+*.vst3
+
