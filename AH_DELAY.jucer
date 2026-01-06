@@ -4,6 +4,8 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="20">
   <MAINGROUP id="PBl8Vk" name="AH_DELAY">
     <GROUP id="{6DE3925E-A3E1-8070-9335-0515B546C942}" name="Source">
+      <FILE id="s3GOOG" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
+      <FILE id="er6W0x" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
       <FILE id="mEi6zr" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
       <FILE id="XiTrQY" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="hYNm5c" name="PluginProcessor.cpp" compile="1" resource="0"

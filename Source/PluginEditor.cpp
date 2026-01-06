@@ -13,9 +13,10 @@
 AH_DELAYAudioProcessorEditor::AH_DELAYAudioProcessorEditor (AH_DELAYAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    addAndMakeVisible(gainKnob);
+    addAndMakeVisible(mixKnob);
+    addAndMakeVisible(delayTimeKnob);
+    setSize (500, 330);
 }
 
 AH_DELAYAudioProcessorEditor::~AH_DELAYAudioProcessorEditor()
@@ -25,16 +26,12 @@ AH_DELAYAudioProcessorEditor::~AH_DELAYAudioProcessorEditor()
 //==============================================================================
 void AH_DELAYAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.fillAll(juce::Colours::darkgrey);
 }
 
 void AH_DELAYAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    delayTimeKnob.setTopLeftPosition(20, 10);
+    mixKnob.setTopLeftPosition(delayTimeKnob.getRight() + 20, 10);
+    gainKnob.setTopLeftPosition(mixKnob.getRight() + 20, 10);
 }
