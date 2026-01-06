@@ -60,5 +60,6 @@ private:
         *this, nullptr, "Parameters", Parameters::createParameterLayout()
     };
     Parameters params;
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AH_DELAYAudioProcessor)
 };
