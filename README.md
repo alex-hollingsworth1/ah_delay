@@ -53,7 +53,9 @@ Source/
 
 ## References
 
-Built following [*The Audio Programmer*](https://www.theaudioprogrammer.com/) book.
+Built following "The Complete Beginner's Guide to Audio Plug-in Development" 
+by Matthijs Hollemans / The Audio Programmer. 
+Source code used under MIT License.
 
 ## Author
 
