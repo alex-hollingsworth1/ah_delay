@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Parameters.h"
 #include "RotaryKnob.h"
+#include "LookAndFeel.h"
 
 //==============================================================================
 /**
@@ -32,6 +33,8 @@ private:
     RotaryKnob gainKnob{"Gain", audioProcessor.apvts, gainParamID};
     RotaryKnob mixKnob{"Mix", audioProcessor.apvts, mixParamID};
     RotaryKnob delayTimeKnob{"Time", audioProcessor.apvts, delayTimeParamID};
+    
+    juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AH_DELAYAudioProcessorEditor)
 };

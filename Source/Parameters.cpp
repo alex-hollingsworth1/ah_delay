@@ -37,6 +37,18 @@ static juce::String stringFromMilliseconds (float value, int)
     }
 }
 
+static float millisecondsFromString(const juce::String& text)
+{
+    float value = text.getFloatValue();
+    
+    if (!text.endsWithIgnoreCase("ms")) {
+        if (text.endsWithIgnoreCase("s") || value < Parameters::minDelayTime) {
+            return value * 1000.0f;
+        }
+    }
+    return value;
+}
+
 static juce::String stringFromDecibels(float value, int)
 {
     return juce::String(value, 1) + "dB";
@@ -62,6 +74,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
                                                            juce::NormalisableRange<float> {minDelayTime, maxDelayTime, 0.001f, 0.25f},
                                                            100.0f,
                                                            juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromMilliseconds)
+                                                                                                .withValueFromStringFunction(millisecondsFromString)
                                                         ));
     layout.add(std::make_unique<juce::AudioParameterFloat>(
                                                            mixParamID,

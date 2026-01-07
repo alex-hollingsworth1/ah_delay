@@ -1,5 +1,6 @@
 #include <JuceHeader.h>
 #include "RotaryKnob.h"
+#include "LookAndFeel.h"
 
 //==============================================================================
 RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID)
