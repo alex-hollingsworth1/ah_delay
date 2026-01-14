@@ -63,5 +63,9 @@ private:
 
     Parameters params;
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
+    
+    float feedbackL = 0.0f;
+    float feedbackR = 0.0f;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AH_DELAYAudioProcessor)
 };
