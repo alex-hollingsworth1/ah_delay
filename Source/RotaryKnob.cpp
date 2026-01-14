@@ -17,14 +17,14 @@ RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeSt
     label.attachToComponent(&slider, false);
     addAndMakeVisible(label);
     
+    setSize(70, 110);
+    
     setLookAndFeel(RotaryKnobLookAndFeel::get());
     
     float pi = juce::MathConstants<float>::pi;
     slider.setRotaryParameters(1.25f * pi, 2.75f * pi, true);
     
     slider.getProperties().set("drawFromMiddle", drawFromMiddle);
-    
-    setSize(70, 110);
 }
 
 RotaryKnob::~RotaryKnob()

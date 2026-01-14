@@ -1,11 +1,3 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -66,8 +58,7 @@ double AH_DELAYAudioProcessor::getTailLengthSeconds() const
 
 int AH_DELAYAudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1;
 }
 
 int AH_DELAYAudioProcessor::getCurrentProgram()
@@ -158,7 +149,7 @@ void AH_DELAYAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[m
 //==============================================================================
 bool AH_DELAYAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* AH_DELAYAudioProcessor::createEditor()
