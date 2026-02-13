@@ -109,7 +109,16 @@ void AH_DELAYAudioProcessor::releaseResources()
 
 bool AH_DELAYAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-return layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo();
+    const auto mono = juce::AudioChannelSet::mono();
+    const auto stereo = juce::AudioChannelSet::stereo();
+    const auto mainIn = layouts.getMainInputChannelSet();
+    const auto mainOut = layouts.getMainOutputChannelSet();
+    
+    if (mainIn == mono && mainOut == mono) { return true; }
+    if (mainIn == mono && mainOut == stereo) { return true; }
+    if (mainIn == stereo && mainOut == stereo) { return true; }
+    
+    return false;
 }
 
 void AH_DELAYAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midiMessages)
@@ -125,19 +134,31 @@ void AH_DELAYAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[m
     
     float sampleRate = float(getSampleRate());
     
-    float* channelDataL = buffer.getWritePointer(0);
-    float* channelDataR = buffer.getWritePointer(1);
+    auto mainInput = getBusBuffer(buffer, true, 0);
+    auto mainInputChannels = mainInput.getNumChannels();
+    auto isMainInputStereo = mainInputChannels > 1;
+    const float* inputDataL = mainInput.getReadPointer(0);
+    const float* inputDataR = mainInput.getReadPointer(isMainInputStereo ? 1 : 0);
+    
+    auto mainOutput = getBusBuffer(buffer, false, 0);
+    auto mainOutputChannels = mainOutput.getNumChannels();
+    auto isMainOutputStereo = mainOutputChannels > 1;
+    float* outputDataL = mainOutput.getWritePointer(0);
+    float* outputDataR = mainOutput.getWritePointer(isMainOutputStereo ? 1 : 0);
     
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
         params.smoothen();
         float delayInSamples = (params.delayTime / 1000.0f) * sampleRate;
         delayLine.setDelay(delayInSamples);
         
-        float dryL = channelDataL[sample];
-        float dryR = channelDataR[sample];
+        float dryL = inputDataL[sample];
+        float dryR = inputDataR[sample];
         
-        delayLine.pushSample(0, dryL + feedbackL);
-        delayLine.pushSample(1, dryR + feedbackR);
+        // Convert stereo to mono
+        float mono = (dryL + dryR) * 0.5f;
+        
+        delayLine.pushSample(0, mono*params.panL + feedbackR);
+        delayLine.pushSample(1, mono*params.panR + feedbackL);
         
         float wetL = delayLine.popSample(0);
         float wetR = delayLine.popSample(1);
@@ -148,8 +169,8 @@ void AH_DELAYAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[m
         float mixL = dryL + wetL * params.mix;
         float mixR = dryR + wetR * params.mix;
         
-        channelDataL[sample] = mixL * params.gain;
-        channelDataR[sample] = mixR * params.gain;
+        outputDataL[sample] = mixL * params.gain;
+        outputDataR[sample] = mixR * params.gain;
         
         #if JUCE_DEBUG
         protectYourEars(buffer);

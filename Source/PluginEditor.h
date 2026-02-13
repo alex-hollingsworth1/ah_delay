@@ -34,6 +34,7 @@ private:
     RotaryKnob mixKnob{"Mix", audioProcessor.apvts, mixParamID};
     RotaryKnob delayTimeKnob{"Time", audioProcessor.apvts, delayTimeParamID};
     RotaryKnob feedbackKnob{"Feedback", audioProcessor.apvts, feedbackParamID, true};
+    RotaryKnob stereoKnob { "Stereo", audioProcessor.apvts, stereoParamID, true };
     MainLookAndFeel mainLF;
     
     juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
