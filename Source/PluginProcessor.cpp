@@ -12,7 +12,8 @@ AH_DELAYAudioProcessor::AH_DELAYAudioProcessor():
    ),
     params(apvts)
 {
-    // do nothing
+    lowCutFilter.setType(juce::dsp::StateVariableTPTFilterType::highpass);
+    highCutFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
 }
 
 AH_DELAYAudioProcessor::~AH_DELAYAudioProcessor()
@@ -101,6 +102,14 @@ void AH_DELAYAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     feedbackL = 0.0f;
     feedbackR = 0.0f;
     
+    lowCutFilter.prepare(spec);
+    lowCutFilter.reset();
+    
+    highCutFilter.prepare(spec);
+    highCutFilter.reset();
+    
+    lastLowCut = -1.0f;
+    lastHighCut = -1.0f;
 }
 
 void AH_DELAYAudioProcessor::releaseResources()
@@ -146,37 +155,76 @@ void AH_DELAYAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[m
     float* outputDataL = mainOutput.getWritePointer(0);
     float* outputDataR = mainOutput.getWritePointer(isMainOutputStereo ? 1 : 0);
     
-    for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
-        params.smoothen();
-        float delayInSamples = (params.delayTime / 1000.0f) * sampleRate;
-        delayLine.setDelay(delayInSamples);
-        
-        float dryL = inputDataL[sample];
-        float dryR = inputDataR[sample];
-        
-        // Convert stereo to mono
-        float mono = (dryL + dryR) * 0.5f;
-        
-        delayLine.pushSample(0, mono*params.panL + feedbackR);
-        delayLine.pushSample(1, mono*params.panR + feedbackL);
-        
-        float wetL = delayLine.popSample(0);
-        float wetR = delayLine.popSample(1);
-        
-        feedbackL = wetL * params.feedback;
-        feedbackR = wetR * params.feedback;
-        
-        float mixL = dryL + wetL * params.mix;
-        float mixR = dryR + wetR * params.mix;
-        
-        outputDataL[sample] = mixL * params.gain;
-        outputDataR[sample] = mixR * params.gain;
-        
+    if (isMainOutputStereo) {
+        // processing loop for stereo
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+            params.smoothen();
+            
+            float delayInSamples = (params.delayTime / 1000.0f) * sampleRate;
+            delayLine.setDelay(delayInSamples);
+            
+            if (params.lowCut != lastLowCut) {
+                lowCutFilter.setCutoffFrequency(params.lowCut);
+                lastLowCut = params.lowCut;
+            }
+            
+            if (params.highCut != lastHighCut) {
+                highCutFilter.setCutoffFrequency(params.highCut);
+                lastHighCut = params.highCut;
+            }
+            
+//            lowCutFilter.setCutoffFrequency(params.lowCut);
+//            highCutFilter.setCutoffFrequency(params.highCut);
+            
+            float dryL = inputDataL[sample];
+            float dryR = inputDataR[sample];
+            
+            // Convert stereo to mono
+            float mono = (dryL + dryR) * 0.5f;
+            
+            delayLine.pushSample(0, mono*params.panL + feedbackR);
+            delayLine.pushSample(1, mono*params.panR + feedbackL);
+            
+            float wetL = delayLine.popSample(0);
+            float wetR = delayLine.popSample(1);
+            
+            feedbackL = wetL * params.feedback;
+            feedbackL = lowCutFilter.processSample(0, feedbackL);
+            feedbackL = highCutFilter.processSample(0, feedbackL);
+            
+            feedbackR = wetR * params.feedback;
+            feedbackR = lowCutFilter.processSample(1, feedbackR);
+            feedbackR = highCutFilter.processSample(1, feedbackR);
+            
+            float mixL = dryL + wetL * params.mix;
+            float mixR = dryR + wetR * params.mix;
+            
+            outputDataL[sample] = mixL * params.gain;
+            outputDataR[sample] = mixR * params.gain;
+        }
+    }
+//        } else {
+//            // processing loop for mono
+//            for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+//                params.smoothen();
+//                
+//                float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+//                
+//                float dry = inputDataL[sample];
+//                delayLine.pushSample(0, dry + feedbackL);
+//                
+//                float wet = delayLine.popSample(0);
+//                feedbackL = wet * params.feedback;
+//                
+//                float mix = dry + wet * params.mix;
+//                outputDataL[sample] = mix * params.gain;
+//            }
+//        }
+    
         #if JUCE_DEBUG
         protectYourEars(buffer);
         #endif
     }
-}
 
 //==============================================================================
 bool AH_DELAYAudioProcessor::hasEditor() const

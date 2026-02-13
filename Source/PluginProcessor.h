@@ -63,9 +63,14 @@ private:
 
     Parameters params;
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
+    juce::dsp::StateVariableTPTFilter<float> lowCutFilter;
+    juce::dsp::StateVariableTPTFilter<float> highCutFilter;
     
     float feedbackL = 0.0f;
     float feedbackR = 0.0f;
+    
+    float lastLowCut = -1.0f;
+    float lastHighCut = -1.0f;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AH_DELAYAudioProcessor)
 };

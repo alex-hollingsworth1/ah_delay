@@ -35,6 +35,8 @@ private:
     RotaryKnob delayTimeKnob{"Time", audioProcessor.apvts, delayTimeParamID};
     RotaryKnob feedbackKnob{"Feedback", audioProcessor.apvts, feedbackParamID, true};
     RotaryKnob stereoKnob { "Stereo", audioProcessor.apvts, stereoParamID, true };
+    RotaryKnob lowCutKnob {"Low Cut", audioProcessor.apvts, lowCutParamID};
+    RotaryKnob highCutKnob{"High Cut", audioProcessor.apvts, highCutParamID};
     MainLookAndFeel mainLF;
     
     juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
