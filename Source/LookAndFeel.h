@@ -35,6 +35,15 @@ namespace Colors
         const juce::Colour label {160, 155, 150};
         const juce::Colour outline {235, 230, 225};
     }
+
+    namespace Button
+    {
+        const juce::Colour text { 80, 80, 80 };
+        const juce::Colour textToggled { 40, 40, 40 };
+        const juce::Colour background { 245, 240, 235 };
+        const juce::Colour backgroundToggled { 255, 250, 245 };
+        const juce::Colour outline { 235, 230, 225 };
+    }
 }
 
 class Fonts
@@ -50,23 +59,23 @@ class Fonts
 
 class RotaryKnobLookAndFeel : public juce::LookAndFeel_V4
 {
-public:
-    RotaryKnobLookAndFeel();
-    static RotaryKnobLookAndFeel* get()
-    {
-        static RotaryKnobLookAndFeel instance;
-        return &instance;
-    }
-    void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
-                        float sliderPos, float rotaryStartAngle,
-                        float rotaryEndAngle, juce::Slider& slider) override;
-    juce::Font getLabelFont(juce::Label&) override;
-    juce::Label* createSliderTextBox(juce::Slider&) override;
-    void drawTextEditorOutline(juce::Graphics&, int, int, juce::TextEditor&) override { }
-    void fillTextEditorBackground(juce::Graphics&, int width, int height, juce::TextEditor&) override;
-private:
-    juce::DropShadow dropShadow {Colors::Knob::dropShadow, 6, {0, 3}};
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotaryKnobLookAndFeel)
+    public:
+        RotaryKnobLookAndFeel();
+        static RotaryKnobLookAndFeel* get()
+        {
+            static RotaryKnobLookAndFeel instance;
+            return &instance;
+        }
+        void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                            float sliderPos, float rotaryStartAngle,
+                            float rotaryEndAngle, juce::Slider& slider) override;
+        juce::Font getLabelFont(juce::Label&) override;
+        juce::Label* createSliderTextBox(juce::Slider&) override;
+        void drawTextEditorOutline(juce::Graphics&, int, int, juce::TextEditor&) override { }
+        void fillTextEditorBackground(juce::Graphics&, int width, int height, juce::TextEditor&) override;
+    private:
+        juce::DropShadow dropShadow {Colors::Knob::dropShadow, 6, {0, 3}};
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotaryKnobLookAndFeel)
 };
 
 class MainLookAndFeel : public juce::LookAndFeel_V4
@@ -78,4 +87,25 @@ class MainLookAndFeel : public juce::LookAndFeel_V4
     
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainLookAndFeel)
+};
+
+class ButtonLookAndFeel : public juce::LookAndFeel_V4
+{
+    public:
+        ButtonLookAndFeel();
+        static ButtonLookAndFeel* get()
+        {
+            static ButtonLookAndFeel instance;
+            return &instance;
+        }
+        void drawButtonBackground(juce::Graphics& g, juce::Button& button,
+                                  const juce::Colour& backgroundColour,
+                                  bool shouldDrawButtonAsHighlighted,
+                                  bool shouldDrawButtonAsDown) override;
+        void drawButtonText(juce::Graphics& g, juce::TextButton& button,
+                            bool shouldDrawButtonAsHighlighted,
+                            bool shouldDrawButtonAsDown) override;
+    
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookAndFeel)
 };
